@@ -8,8 +8,10 @@
   const fromPartner = medium === 'partnership' && ['developer', 'creator'].includes(audience);
   if (!fromPartner && medium !== 'editorial') return;
 
+  const publications = ['subthread', 'indiedevmonday', 'dreamboat', 'creativevault', 'indiewait', 'freelancethings'];
+  const publication = incoming.get('utm_source');
   const labels = new URLSearchParams({
-    utm_source: 'showcase',
+    utm_source: medium === 'editorial' && publications.includes(publication) ? publication : 'showcase',
     utm_medium: medium,
     utm_campaign: campaign,
     utm_content: fromPartner ? audience : 'editorial',
@@ -23,7 +25,11 @@
     const ko = document.documentElement.lang === 'ko';
     const group = audience === 'developer' ? (ko ? '앱 개발팀' : 'App maker') : (ko ? '크리에이터' : 'Creator');
     const subject = ko ? '양치냥 오픈 알림' : 'Brush Nyang launch notice';
-    document.querySelector('[data-launch-mail]').href =
-      'mailto:support@drtryon.org?subject=' + encodeURIComponent(subject + ' · ' + group);
+    for (const [selector, key] of [['[data-launch-mail]', 'subject'], ['[data-web-mail]', 'su']]) {
+      const link = document.querySelector(selector);
+      const url = new URL(link.href);
+      url.searchParams.set(key, subject + ' · ' + group);
+      link.href = url.href.replace(/\+/g, '%20');
+    }
   }
 })();
