@@ -8,7 +8,7 @@
   const fromPartner = medium === 'partnership' && ['developer', 'creator'].includes(audience);
   if (!fromPartner && medium !== 'editorial') return;
 
-  const publications = ['subthread', 'indiedevmonday', 'dreamboat', 'creativevault', 'indiewait', 'freelancethings'];
+  const publications = ['subthread', 'indiedevmonday', 'dreamboat', 'creativevault', 'indiewait', 'freelancethings', 'somewhatcreative'];
   const publication = incoming.get('utm_source');
   const labels = new URLSearchParams({
     utm_source: medium === 'editorial' && publications.includes(publication) ? publication : 'showcase',
@@ -18,7 +18,7 @@
   });
   for (const anchor of document.querySelectorAll('[data-product], [data-language]')) {
     const destination = new URL(anchor.href);
-    destination.search = labels.toString();
+    for (const [key, value] of labels) destination.searchParams.set(key, value);
     anchor.href = destination.href;
   }
   if (fromPartner) {
